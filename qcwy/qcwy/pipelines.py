@@ -9,6 +9,8 @@ import json
 import codecs
 import MySQLdb
 import MySQLdb.cursors
+from parameters import skills
+
 
 from twisted.enterprise import adbapi
 from scrapy import signals
@@ -31,22 +33,27 @@ class QcwyMySQLPipeline(object):
         self.connpool = adbapi.ConnectionPool('MySQLdb',
             host = '127.0.0.1',
             db = 'job_project',
-            user = 'dante',
+            user = 'root',
             passwd = 'password',
             cursorclass = MySQLdb.cursors.DictCursor,
             charset = 'utf8',
             use_unicode = True
             )
             
-#    def process_item(self, item, spider):
-#        query = self.connpool.runInteraction(self._conditional_insert, item)
-#        query.addErrback(self.handle_error)
-#        return item
-#
-#    def _conditional_insert(self, tx, item):
-#        if item.get('title'):
-#            tx.execute("insert into detail (title, link, company, updatetime) values(%s, %s, %s, %s)", 
-#                (item['title'], item['link'], item['company'], item['updatetime']))
+    def process_item(self, item, spider):
+        query = self.connpool.runInteraction(self._conditional_insert, item)
+        query.addErrback(self.handle_error)
+        return item
+
+    def _conditional_insert(self, tx, item):
+        if item.get('title'):
+            sql = "insert into alljobs "
+#            column = "('%s', '%s', '%s', '%s', '%s', '%s'" % ('salary', 'title', 'company', 'location', 'updatetime', 'link')
+            param = "values ('%s', '%s', '%s', '%s', '%s', '%s'" % (item['salary'], item['title'], item['company'], item['location'], item['updatetime'], item['link'])
+            for skill in skills.values():
+                param += ", "+str(item[skill])
+            sql += param+")"
+            tx.execute(sql)
 
     def handle_error(self, e):
         adbapi.log.err(e)

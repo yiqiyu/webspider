@@ -2,31 +2,71 @@
 
 import logging
 import scrapy
-import urllib
 import codecs
 import re
-import copy
 
 from scrapy.selector import Selector
 
 from qcwy.items import QcwyItem
+from qcwy.parameters import keywordcode, skills, formdata
 
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-#同一属性两个条件联合用,分隔
-keyword = {
-           "jobarea" : "020000,030200,010000,040000,080200,00",   #北上广深杭
-           "industrytype" : "32",   #32表示互联网，42银行，03证券/金融，43保险
-           "keyword" : "数据分析",
-           "workyear" : "99",        #99表示所有，01无经验，02一到三年，03三到五年，04五到十年
-            }
-#把字符串编码成符合url规范的编码
-keywordcode = urllib.urlencode(keyword)
 
 is_start_page = True
 has_tested = False
+
+def Search(kw, desc):
+    """
+    查找关键字的函数，输入为关键字字符串和需查找的字符串，如果存在关键字则返回1，否则0
+    """
+    flag = 0
+    kws = re.compile(kw, re.I)
+    if kws.search(desc.strip()):
+        flag = 1
+    return flag
+    
+def ContentScanner(content):
+    """
+    查找内容路径的函数，输入为selector对象，输出为文字内容所在的xpath路径
+    """
+    lines = content.extract()
+    desc = []
+    for line in lines:    
+        pre = re.findall(u"\S+", line)
+        raw = ''
+        for word in pre:
+            raw = raw+word
+        sentence = re.sub(r'<\S+?>','', raw)
+        desc.append(sentence)
+    return sentence
+
+def SalaryScanner(content):
+    """
+    计算平均月薪，输入为字符串，返回平均月薪
+    """
+    year_check = re.compile(u'年')
+    day_check = re.compile(u'日')
+    tt_check = re.compile(u'万')
+    num = re.findall(r'\d+', content)
+    aver = 0
+    for i in num:
+        aver += int(i)
+    aver = aver/len(num)
+    if year_check.search(content):
+        aver /= 12
+    elif day_check.search(content):
+        aver = aver*30
+    if tt_check.search(content):
+        aver *= 10000
+    if aver < 100:
+        aver *= 10000
+    if aver > 100000:
+        aver /=12
+    return aver
+        
 
 class TestfollowSpider(scrapy.Spider):
    
@@ -38,67 +78,62 @@ class TestfollowSpider(scrapy.Spider):
     count = 1
     cookies={'guide':'1' }
     def parse(self, response):
+#        登录界面
         login=scrapy.FormRequest.from_response(response,
-                                               formdata={'username':'yiqiyu33@hotmail.com', 'userpwd':'D4a677,OP20'},
+                                               formdata=formdata,
                                                 callback=self.after_post)
         yield login
         
     def after_post(self, response):
-        with open('after', 'wb') as f:
-            f.write('start\r\n')
-        with open('link', 'wb') as f:
-            f.write('start\r\n')
+#        登录界面进入后
         url = "http://search.51job.com/jobsearch/search_result.php?fromJs=1&funttype=0000&"+keywordcode
         return scrapy.Request(url,cookies=self.cookies, callback=self.parse_dir_contents)     
 
     def parse_dir_contents(self, response):
+        """
+        爬取的基本信息和翻页操作
+        """
         with open('after', 'ab') as f:
             f.write(str(self.count))
             self.count+=1
             f.write('\r\n')
-#            f.write(response.body)    
         
         for sel in response.xpath('//body/div[@class="dw_wp"]/div[@class="dw_table"]/div[@class="el"]'):
             temp = sel.xpath('p/span/a')
-            item = QcwyItem()
+            item = {}
             item['title'] = temp.xpath('@title').extract()[0]
             link = temp.xpath('@href').extract()[0]
-            with open('text', 'wb') as f:
-                f.write('start\r\n')           
-            has_excel = []
-            yield scrapy.Request(link, callback=self.parse_details, meta={'has_excel':has_excel})
-            with open('link', 'ab') as f:
-                f.write(link+'\r\n')
 
             
             item['link'] = link
             item['company'] = sel.xpath('span[@class="t2"]/a/text()').extract()[0]
             item['location'] = sel.xpath('span[@class="t3"]/text()').extract()[0]
             if sel.xpath('span[@class="t4"]/text()').extract():
-                item['salary'] = sel.xpath('span[@class="t4"]/text()').extract()[0]
+                item['salary'] = SalaryScanner(sel.xpath('span[@class="t4"]/text()').extract()[0])
             else:
                 item['salary'] = None
-            item['updatetime'] = sel.xpath('span[@class="t5"]/text()').extract()[0]
-            item['has_excel'] = 1 if has_excel else 0
+            item['updatetime'] = '2016-'+sel.xpath('span[@class="t5"]/text()').extract()[0]
             
-
-            yield item
-#        next_page = response.xpath('//body/div[@class="dw_wp"]/div[@class="dw_page"]/div/div/div/ul/li[last()]/a/@href')
-#        if next_page:
-#            url = response.urljoin(next_page[0].extract())
-#            yield scrapy.Request(url, cookies=self.cookies, callback=self.parse_dir_contents)
+            yield scrapy.Request(link, callback=self.parse_details, meta={'item':item})
+            
+        next_page = response.xpath('//body/div[@class="dw_wp"]/div[@class="dw_page"]/div/div/div/ul/li[last()]/a/@href')
+        if next_page:
+            url = response.urljoin(next_page[0].extract())
+            yield scrapy.Request(url, cookies=self.cookies, callback=self.parse_dir_contents)
             
     
     def parse_details(self, response):
-        with open('text', 'ab') as f:
-            f.write('OK\r\n')
-#        item = response.meta['item']
-        desc = response.xpath('/html/body/div[@class="tCompanyPage"]/div[2]/div[3]/div[4]/div/text()').extract()
-        excel = re.compile('excel', re.I)
-        has_excel = response.meta['has_excel']
-        for line in desc:
-            if excel.search(line):
-                has_excel.append(True)
-                with open('text', 'ab') as f:
-                    f.write(line+'\r\n')
-#        item['has_excel'] = 1 if has_excel else 0
+        """
+        进入招聘页面爬取详细信息，并返回item
+        """
+        item = QcwyItem()
+        info = response.meta['item']
+        mainbox = response.xpath('/html/body/div[@class="tCompanyPage"]/div[2]/div[3]/div[4]/div')
+        #提取详细描述
+        desc = ContentScanner(mainbox)
+        for k,i in skills.items():
+            item[i] = Search(k, desc)
+        
+        for i,j in info.items():
+            item[i] = j
+        yield item

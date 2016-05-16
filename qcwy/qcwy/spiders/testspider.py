@@ -34,30 +34,18 @@ class TestSpider(scrapy.Spider):
     name = 'test'
     allowed_domains = ["51job.com"]
     start_urls = [
-        "http://my.51job.com/my/My_SignIn.php",
+        "http://jobs.51job.com/shanghai-pdxq/54740360.html?s=1",
     ]
     def parse(self, response):
-        with open('before', 'wb') as f:
-            f.write(response.body)
-        jobsearch = scrapy.FormRequest.from_response(response,
-                formdata={'lang': 'c', 'stype': '2', 'postchannel' : '0000', 'fromType' : '1', 'line' : '', 'confirmdate':'9', 'from':'', 'keywordtype':'2', 'keyword':'cae', 'jobarea':'010000', 'industrytype':'00','functype':'0000','x':'72', 'y':'10'},
-                callback=self.after_post)
-        login=scrapy.FormRequest.from_response(response,
-                                               formdata={'from_domain':'www.51job.com', 'passport_loginName':'yiqiyu33@hotmail.com', 'passport_password':'D4a677,OP20'},
-                                               callback=self.after_post)
-        login2=scrapy.FormRequest.from_response(response,
-                                               formdata={'username':'yiqiyu33@hotmail.com', 'userpwd':'D4a677,OP20'},
-                                                callback=self.after_post)
-        return login2
-                
-    def after_post(self, response):
-        with open('after', 'wb') as f:
-            f.write(response.body)
-        url = "http://search.51job.com/list/%2B,%2B,%2B,%2B,%2B,%2B,cae,0,%2B.html?lang=c&stype=2"
-        cookies={
-                 'guide':'1' 
-                }
-        return scrapy.Request(url,cookies=cookies, callback=self.parse_dir_contents)
-        
-    def parse_dir_contents(self,response):
-        open_in_browser(response)
+        with open('test', 'wb') as f:
+            f.write('start\r\n')
+        desc = response.xpath('/html/body/div[@class="tCompanyPage"]/div[2]/div[3]/div[4]/div/text()').extract()
+        for sel in desc:
+#            i=sel.xpath('text()').extract()
+#            for j in i:
+#                with open('test', 'ab') as f:
+#                    f.write(j+'\r\n')
+            with open ('test', 'ab') as f:
+                if sel:
+                    f.write(sel+'1\r\n')
+            
