@@ -41,4 +41,4 @@ skills = {
         }
  
 #输入你的登录名与密码 
-formdata = {'username':'yiqiyu33@hotmail.com', 'userpwd':'D4a677,OP20'}
+formdata = {'username':'yourname', 'userpwd':'password'}
