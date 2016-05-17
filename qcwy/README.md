@@ -1,12 +1,12 @@
 ﻿# qcwy
- plus  
+_plus  
 使用scrapy实现一个搜索并抓取前程无忧职位信息的爬虫
 
 主要功能：通过提供的关键字、地区、行业、工作年限，搜索前程无忧上的职位，获取职位的相关信息
 
 ，并将其存入指定的MySQL库中。
 
-使用方法：
+使用方法：  
 1.在qwcy/qwcy/parameters.py中修改搜索参数  
 2.修改qwcy/qwcy/db_setup.py中修改登录参数，并运行以创建数据库  
 3.运行qwcy/run.bat，或调出cmd命令行输入scrapy crawl qcwysearch进行爬取  
