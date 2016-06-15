@@ -127,13 +127,13 @@ class TestfollowSpider(scrapy.Spider):
         进入招聘页面爬取详细信息，并返回item
         """
         item = QcwyItem()
-        info = response.meta['item']
+        basicInfo = response.meta['item']
         mainbox = response.xpath('/html/body/div[@class="tCompanyPage"]/div[2]/div[3]/div[4]/div')
         #提取详细描述
         desc = ContentScanner(mainbox)
-        for k,i in skills.items():
-            item[i] = Search(k, desc)
+        for key,value in skills.items():
+            item[key] = Search(value, desc)
         
-        for i,j in info.items():
-            item[i] = j
+        for key,value in basicInfo.items():
+            item[key] = value
         yield item
