@@ -1,7 +1,6 @@
 # qcwy_plus
 ***
   
-  
 ## 简述
 
 使用scrapy实现一个搜索并抓取前程无忧职位信息的爬虫
@@ -12,7 +11,6 @@
   
 <br />
 <br />
-  
 ## 软件环境
 
 python==2.7.10  
@@ -21,7 +19,6 @@ MySQL Server==5.6
   
 <br />
 <br />
-  
 ## 使用方法
 
 1. 在qwcy/qwcy/settings.py中修改搜索参数,51jobs登录参数和MySQL的数据库信息 
@@ -30,7 +27,6 @@ MySQL Server==5.6
   
 <br />
 <br />
-  
 ## 最后
 
 如有疑问可以邮件我dante3@126.com，谢谢！
