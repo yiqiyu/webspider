@@ -86,7 +86,7 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE='scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 #搜索参数
-#同一属性两个条件联合用,分隔
+#同一属性两个条件联合用逗号分隔
 KEYWORD = {
            'jobarea': '020000,030200,010000,040000,080200,00',   #北上广深杭
            'industrytype': '00',   #32表示互联网，42银行，03证券/金融，43保险, 00全体
@@ -117,7 +117,7 @@ SKILLS = {
         }
  
 #输入你的登录名与密码 
-FORMDATA = {'username': 'yiqiyu33@hotmail.com', 'userpwd': 'D4a677,OP20'}
+FORMDATA = {'username': 'name', 'userpwd': 'password'}
 
 #数据库名称与表名
 DATABASE = {

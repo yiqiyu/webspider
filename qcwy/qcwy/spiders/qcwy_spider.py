@@ -60,7 +60,6 @@ class TestfollowSpider(scrapy.Spider):
     name = "qcwysearch"
     allowed_domains = ["51job.com"]
     start_urls = ["http://my.51job.com/my/My_SignIn.php"]
-#    count = 1
     cookies={'guide':'1' }
         
     def parse(self, response):
@@ -78,10 +77,6 @@ class TestfollowSpider(scrapy.Spider):
         """
         爬取的基本信息和翻页操作
         """
-#        with open('after', 'ab') as f:
-#            f.write(str(self.count))
-#            self.count+=1
-#            f.write('\r\n')
         #按条目逐条爬取基本信息        
         for sel in response.xpath('//body/div[@class="dw_wp"]/div[@class="dw_table"]/div[@class="el"]'):
             basic_info = {}
@@ -111,7 +106,5 @@ class TestfollowSpider(scrapy.Spider):
         hasSkill = lambda kw,desc: 1 if re.search(kw, desc.strip(), re.I) else 0        
         for skill,skill_desc in SKILLS.items():
             item[skill] = hasSkill(skill_desc, desc)       
-#        for key,value in basic_info.items():
-#            item[key] = value
         item.update(basic_info)
         yield item
