@@ -10,6 +10,7 @@
 但是该爬虫目前已不能正常使用。本爬虫在该基础上实现了更多功能。
 
 
+
 ## 软件环境
 
 python==2.7.10
@@ -17,11 +18,13 @@ SQLAlchemy==1.0.13
 MySQL Server==5.6
 
 
+
 ## 使用方法
 
 1. 在qwcy/qwcy/settings.py中修改搜索参数,51jobs登录参数和MySQL的数据库信息 
 2. 运行qwcy/run.bat，或调出cmd命令行输入scrapy crawl qcwysearch进行爬取
 3. 在qwcy/qwcy目录中找到json格式的搜索结果qcwy.json文件，或登入MySQL查询
+
 
 
 ## 最后
