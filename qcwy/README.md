@@ -23,7 +23,7 @@ MySQL Server==5.6
 2. 运行qwcy/run.bat，或调出cmd命令行输入scrapy crawl qcwysearch进行爬取
 3. 在qwcy/qwcy目录中找到json格式的搜索结果qcwy.json文件，或登入MySQL查询
 <br />
-<br />
+  
 ## 最后
 
 如有疑问可以邮件我dante3@126.com，谢谢！
