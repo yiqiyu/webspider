@@ -1,1 +1,2 @@
 scrapy crawl qcwysearch
+pause

@@ -84,3 +84,46 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR='httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES=[]
 #HTTPCACHE_STORAGE='scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+#搜索参数
+#同一属性两个条件联合用逗号分隔
+KEYWORD = {
+           'jobarea': '020000,030200,010000,040000,080200,00',   #北上广深杭
+           'industrytype': '00',   #32表示互联网，42银行，03证券/金融，43保险, 00全体
+           'keyword': '数据分析',
+           'workyear': '99',        #99表示所有，01无经验，02一到三年，03三到五年，04五到十年
+            }
+
+
+#所需要的搜索的技能表，key为技能名，value为对应正则表达式
+SKILLS = {
+        'has_excel': 'excel',
+        'has_mining': u'数据挖掘',
+        'has_python': 'python',
+        'has_hadoop': 'Hadoop',
+        'has_hive': 'HIVE',
+        'has_sql': 'SQL',
+        'has_sas': 'SAS',
+        'has_spss': 'SPSS',
+        'has_java': 'java',
+        'has_GA': 'Google Analytics|GA',
+        'has_crawler': u'爬虫',
+        'has_ETL': u'数据仓库|ETL',
+        'has_R': u'R语言|(([\u4e00-\u9fa5]|\uff0c|\u3001|/|\\\\)R([\u4e00-\u9fa5]|\uff0c|\u3001|/|\\\\))',
+        'has_mlearning': u'机械学习|scikit',
+        'has_modeling': u'建模|数学模型',
+        'has_algorithm': u'算法',
+        'has_visialize': u'可视化|tableau'
+        }
+ 
+#输入你的登录名与密码 
+FORMDATA = {'username': 'name', 'userpwd': 'password'}
+
+#数据库名称与表名
+DATABASE = {
+            'user': 'root', 
+            'password': 'password', 
+            'host': 'localhost',
+            'name': 'job_project',
+            'table': 'alljobs'
+            }
