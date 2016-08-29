@@ -109,7 +109,7 @@ SKILLS = {
         'has_GA': 'Google Analytics|GA',
         'has_crawler': u'爬虫',
         'has_ETL': u'数据仓库|ETL',
-        'has_R': u'R语言|(([\u4e00-\u9fa5]|\uff0c|\u3001|/|\\\\)R([\u4e00-\u9fa5]|\uff0c|\u3001|/|\\\\))',
+        'has_R': r'\b[\u4e00-\u9fa5]*R[\u4e00-\u9fa5]*\b',
         'has_mlearning': u'机械学习|scikit',
         'has_modeling': u'建模|数学模型',
         'has_algorithm': u'算法',

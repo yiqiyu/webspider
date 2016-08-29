@@ -71,7 +71,7 @@ class QcwyMySQLPipeline(object):
 #        self.session.close()
         
     def process_item(self, item, spider):
-        if item.get('title') and item['salary'] > 100 and item['salary'] < 100000:
+        if item.get('title') and 100 < item['salary'] < 100000:
             session = self.Session() 
             insertHandler = self.table.insert()
             insertHandler.execute(item)
